@@ -1,0 +1,26 @@
+```mermaid
+
+  graph TD
+    subgraph FrontEnd [Capa de Presentación - Front-End]
+        User[Navegador Web / Usuario]
+        HTML[HTML5 Semántico]
+        CSS[CSS3 Personalizado - Flexbox/Grid]
+    end
+
+    subgraph BackEnd [Capa de Aplicación - Back-End Django]
+        URLs[Django URLs - Router]
+        Views[Django Views - Lógica de Negocio]
+        Templates[Django Templates - Renderizado]
+    end
+
+    subgraph Database [Capa de Datos]
+        BD[(Base de Datos Relacional)]
+    end
+
+    User -->|Petición HTTP GET / POST| URLs
+    URLs --> Views
+    Views -->|Consultas ORM| BD
+    BD -->|Retorna Datos| Views
+    Views -->|Inyecta Datos| Templates
+    Templates -->|Respuesta HTTP con HTML/CSS| User
+  ```
