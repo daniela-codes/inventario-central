@@ -36,6 +36,11 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=150)
     descripcion = models.TextField(blank=True, null=True)
     stock = models.PositiveIntegerField(default=0)
+
+    # Stock mínimo de referencia para generar alertas.
+    # Por defecto son 5 unidades, pero puede modificarse por producto.
+    stock_minimo = models.PositiveIntegerField(default=5)
+
     precio = models.DecimalField(max_digits=10, decimal_places=2)
 
     # Cada producto debe pertenecer a una categoría.

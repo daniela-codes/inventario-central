@@ -1,226 +1,39 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Inventario Central · CEIA La Pintana</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <script src="{% static 'main.js' %}" defer></script>
-
-</head>
-
-<body>
-<div class="layout">
-
-    <aside>
-        <div class="brand">
-        <div class="brand-icon">IC</div>
-        <div>
-            <h1>Inventario<br>Central</h1>
-        </div>
-    </div>
-
-    <div class="project-info">
-    <span>Proyecto académico</span>
-    <strong>API REST de inventario</strong>
-    <small>CEIA La Pintana</small>
-    </div>
-
-        <div class="nav-title">Accesos del sistema</div>
-        <a class="nav-link active" href="/">Panel principal</a>
-        <a class="nav-link" href="/api/">API REST</a>
-        <a class="nav-link" href="/api/productos/">Productos</a>
-        <a class="nav-link" href="/api/categorias/">Categorías</a>
-        <a class="nav-link" href="/api/movimientos/">Movimientos</a>
-        <a class="nav-link" href="/admin/">Administración</a>
-    </aside>
-
-    <main>
-        <section class="hero">
-            <div>
-                <div class="status-row">
-                    <span class="status-pill green">API REST activa</span>
-                    <span class="status-pill">Sistema en etapa de desarrollo académico</span>
-                    <span class="status-pill">Junio 2026</span>
-                </div>
-
-                <h2>Control de inventario para recursos del CEIA La Pintana</h2>
-                <p>
-                    Sistema web institucional orientado a centralizar la información de productos,
-                    proveedores, categorías y movimientos internos. La plataforma permite consultar
-                    y administrar recursos de oficina, pedagógicos y de aseo mediante una API REST
-                    desarrollada con Django y Django REST Framework.
-                </p>
-
-                <div class="actions">
-                    <a class="btn btn-light" href="/api/">Explorar API REST</a>
-                    <a class="btn btn-green" href="/admin/">Ingresar al admin</a>
-                </div>
-            </div>
-
-            <div class="hero-panel">
-                <strong>Recursos gestionados</strong>
-                <ul>
-                    <li>Materiales de oficina</li>
-                    <li>Materiales pedagógicos</li>
-                    <li>Materiales de aseo</li>
-                    <li>Entradas y salidas de stock</li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="stats">
-            <div class="stat-card">
-                <span>Categorías</span>
-                <h3>{{ total_categorias }}</h3>
-            </div>
-
-            <div class="stat-card">
-                <span>Proveedores</span>
-                <h3>{{ total_proveedores }}</h3>
-            </div>
-
-            <div class="stat-card">
-                <span>Productos</span>
-                <h3>{{ total_productos }}</h3>
-            </div>
-
-            <div class="stat-card featured">
-                <span>Productos con stock</span>
-                <h3>{{ productos_con_stock }}</h3>
-            </div>
-
-            <div class="stat-card">
-                <span>Movimientos</span>
-                <h3>{{ total_movimientos }}</h3>
-            </div>
-
-            <div class="stat-card">
-                <span>Stock total</span>
-                <h3>{{ total_stock }}</h3>
-            </div>
-        </section>
-
-        <section class="content-grid">
-            <div class="panel">
-                <h3>Objetivo de la plataforma</h3>
-                <p>
-                    Inventario Central permite digitalizar el registro de materiales del CEIA La Pintana,
-                    centralizar la información y apoyar la toma de decisiones sobre el uso de recursos
-                    internos. Su API REST permite consultar, crear, actualizar y eliminar registros
-                    de forma estructurada, favoreciendo una gestión más ordenada y escalable.
-                </p>
-
-                <div class="chips">
-                    <span class="chip">Django</span>
-                    <span class="chip">Django REST Framework</span>
-                    <span class="chip success">API REST activa</span>
-                    <span class="chip">CRUD</span>
-                    <span class="chip">Serializers</span>
-                    <span class="chip">ViewSets</span>
-                    <span class="chip warning">Desarrollo académico</span>
-                </div>
-
-                <h3 style="margin-top: 28px;">Productos recientes</h3>
-
-                {% if ultimos_productos %}
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Categoría</th>
-                                <th>Stock</th>
-                                <th>Proveedor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for producto in ultimos_productos %}
-                                <tr>
-                                    <td>{{ producto.nombre }}</td>
-                                    <td>{{ producto.categoria.nombre }}</td>
-                                    <td><span class="badge">{{ producto.stock }}</span></td>
-                                    <td>
-                                        {% if producto.proveedor %}
-                                            {{ producto.proveedor.nombre }}
-                                        {% else %}
-                                            Sin proveedor
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <div class="empty">
-                        Aún no hay productos registrados. Puedes agregarlos desde el panel administrador o desde la API.
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="panel">
-                <h3>Endpoints principales</h3>
-                <p>
-                    Accesos directos a los recursos disponibles en la API REST del sistema.
-                </p>
-
-                <div class="endpoints">
-                    <div class="endpoint">
-                        <code>/api/categorias/</code>
-                        <a class="btn" href="/api/categorias/">Ver</a>
-                    </div>
-
-                    <div class="endpoint">
-                        <code>/api/proveedores/</code>
-                        <a class="btn" href="/api/proveedores/">Ver</a>
-                    </div>
-
-                    <div class="endpoint">
-                        <code>/api/productos/</code>
-                        <a class="btn" href="/api/productos/">Ver</a>
-                    </div>
-
-                    <div class="endpoint">
-                        <code>/api/movimientos/</code>
-                        <a class="btn" href="/api/movimientos/">Ver</a>
-                    </div>
-                </div>
-
-                <h3 style="margin-top: 28px;">Últimos movimientos</h3>
-
-                {% if ultimos_movimientos %}
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tipo</th>
-                                <th>Producto</th>
-                                <th>Cantidad</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for movimiento in ultimos_movimientos %}
-                                <tr>
-                                    <td>{{ movimiento.tipo }}</td>
-                                    <td>{{ movimiento.producto.nombre }}</td>
-                                    <td>{{ movimiento.cantidad }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <div class="empty">
-                        Aún no hay movimientos registrados.
-                    </div>
-                {% endif %}
-            </div>
-        </section>
-
-        <footer>
-            Inventario Central para CEIA La Pintana
-        </footer>
-    </main>
-
-</div>
-</body>
-</html>
+{% extends 'inventario/base.html' %}
+{% block title %}Panel de inventario{% endblock %}
+{% block page_title %}Panel de inventario{% endblock %}
+{% block content %}
+  <section class="heading">
+    <div><h2>Resumen general</h2><p>Hola, Administrador. Aquí tienes un resumen del estado actual del inventario.</p></div>
+    <div class="actions"><a class="primary" href="{% url 'producto_crear' %}">＋ Registrar producto</a><a class="secondary" href="{% url 'movimiento_crear' %}">↔ Nuevo movimiento</a></div>
+  </section>
+  <section class="stats">
+    <article class="card"><div class="metric-icon">□</div><div><label>PRODUCTOS</label><strong>{{ total_productos }}</strong><small>Productos registrados</small></div></article>
+    <article class="card"><div class="metric-icon">▱</div><div><label>STOCK TOTAL</label><strong>{{ total_stock }}</strong><small>Unidades en inventario</small></div></article>
+    <article class="card"><div class="metric-icon">↕</div><div><label>MOVIMIENTOS</label><strong>{{ total_movimientos }}</strong><small>Historial registrado</small></div></article>
+    <article class="card warning"><div class="metric-icon orange">△</div><div><label>ALERTAS DE STOCK</label><strong>{{ productos_con_stock }}</strong><small>Productos bajo mínimo</small></div></article>
+  </section>
+  <section class="dashboard-grid">
+    <article class="panel chart-panel">
+      <div class="panel-head"><h3>Stock por categoría</h3><span class="panel-chip">Unidades</span></div>
+      <div class="bar-chart"><div class="bar-y-axis"><span>3.000</span><span>2.500</span><span>2.000</span><span>1.500</span><span>1.000</span><span>500</span><span>0</span></div>
+        <div class="chart-area"><div class="grid-lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="bars">
+          {% for categoria in categorias_stock %}<div class="bar-item"><b>{{ categoria.total_stock|default:0 }}</b><div class="bar" style="height: {{ categoria.altura }}px;"></div><span>{{ categoria.nombre }}</span></div>{% empty %}<p class="chart-empty">No hay categorías con productos.</p>{% endfor %}
+        </div></div>
+      </div>
+    </article>
+    <article class="panel donut-panel">
+      <div class="panel-head"><h3>Entradas y salidas</h3></div>
+      <div class="donut-row"><div class="donut" style="background: conic-gradient(var(--g2) 0 {{ porcentaje_entradas }}%, var(--orange) {{ porcentaje_entradas }}% 100%);"><div><strong>{{ total_movimientos_30_dias }}</strong><small>Total</small></div></div><div class="legend"><p><i class="green-dot"></i>Entradas <b>{{ total_entradas }} ({{ porcentaje_entradas }}%)</b></p><p><i class="orange-dot"></i>Salidas <b>{{ total_salidas }} ({{ porcentaje_salidas }}%)</b></p></div></div>
+    </article>
+    <article class="panel alerts-panel">
+      <div class="panel-head"><h3>Alertas de stock</h3><a href="{% url 'productos' %}?estado=bajo">Ver todos</a></div>
+      <div class="alert-list">{% for producto in productos_alerta %}<div class="alert"><span>△</span><div><b>{{ producto.nombre }}</b><small>{{ producto.categoria.nombre }} · {{ producto.stock }} unid. · Mínimo {{ producto.stock_minimo }}</small></div></div>{% empty %}<div class="empty">No hay productos bajo el stock mínimo.</div>{% endfor %}</div>
+    </article>
+  </section>
+  <section class="panel movements">
+    <div class="panel-head"><h3>Movimientos recientes</h3></div>
+    {% if ultimos_movimientos %}<div class="table-scroll"><table><thead><tr><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Fecha</th><th>Responsable</th><th>Estado</th></tr></thead><tbody>
+      {% for movimiento in ultimos_movimientos %}<tr><td><div class="product"><span class="movement-icon {% if movimiento.tipo == 'ENTRADA' %}in{% else %}out{% endif %}">{% if movimiento.tipo == 'ENTRADA' %}↓{% else %}↑{% endif %}</span>{{ movimiento.producto.nombre }}</div></td><td><span class="type {% if movimiento.tipo == 'ENTRADA' %}entry{% else %}exit{% endif %}">{{ movimiento.get_tipo_display }}</span></td><td><b>{{ movimiento.cantidad }}</b></td><td>{{ movimiento.fecha|date:'d/m/Y H:i' }}</td><td>Administrador</td><td><span class="status">Completado</span></td></tr>{% endfor %}
+    </tbody></table></div><div class="view-all"><a href="{% url 'movimientos' %}">Ver todos los movimientos</a></div>{% else %}<div class="empty">Aún no hay movimientos registrados.</div>{% endif %}
+  </section>
+{% endblock %}

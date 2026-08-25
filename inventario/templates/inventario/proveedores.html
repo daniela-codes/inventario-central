@@ -1,0 +1,11 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Proveedores{% endblock %}
+{% block page_title %}Proveedores{% endblock %}
+{% block content %}
+<section class="heading"><div><h2>Directorio de proveedores</h2><p>Administra los datos de contacto de quienes abastecen el inventario.</p></div><div class="actions"><a class="primary" href="{% url 'proveedor_crear' %}">＋ Nuevo proveedor</a></div></section>
+<section class="panel filter-panel"><form method="get" class="filters compact"><label class="search-field"><span>⌕</span><input type="search" name="q" value="{{ q }}" placeholder="Buscar nombre, correo o teléfono..."></label><button class="filter-button" type="submit">Buscar</button><a class="clear-filter" href="{% url 'proveedores' %}">Limpiar</a></form></section>
+<section class="panel data-panel"><div class="panel-head"><h3>Proveedores registrados</h3><span class="result-count">{{ registros|length }} resultados</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>Proveedor</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Productos</th><th>Acciones</th></tr></thead><tbody>
+  {% for proveedor in registros %}<tr><td><div class="entity"><span class="entity-icon">♧</span><div><b>{{ proveedor.nombre }}</b><small>ID #{{ proveedor.pk }}</small></div></div></td><td>{{ proveedor.telefono|default:'No registrado' }}</td><td>{{ proveedor.correo|default:'No registrado' }}</td><td>{{ proveedor.direccion|default:'No registrada' }}</td><td><span class="soft-badge">{{ proveedor.total_productos }} productos</span></td><td><div class="row-actions"><a href="{% url 'proveedor_editar' proveedor.pk %}">Editar</a><a class="danger-link" href="{% url 'proveedor_eliminar' proveedor.pk %}">Eliminar</a></div></td></tr>
+  {% empty %}<tr><td colspan="6"><div class="empty-state"><b>No se encontraron proveedores</b><span>Registra el primero para asociarlo a productos.</span></div></td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

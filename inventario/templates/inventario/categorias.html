@@ -1,0 +1,11 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Categorías{% endblock %}
+{% block page_title %}Categorías{% endblock %}
+{% block content %}
+<section class="heading"><div><h2>Organización por categorías</h2><p>Agrupa los productos para facilitar su control y búsqueda.</p></div><div class="actions"><a class="primary" href="{% url 'categoria_crear' %}">＋ Nueva categoría</a></div></section>
+<section class="panel filter-panel"><form method="get" class="filters compact"><label class="search-field"><span>⌕</span><input type="search" name="q" value="{{ q }}" placeholder="Buscar categoría..."></label><button class="filter-button" type="submit">Buscar</button><a class="clear-filter" href="{% url 'categorias' %}">Limpiar</a></form></section>
+<section class="category-grid">
+  {% for categoria in registros %}<article class="panel category-card"><div class="category-icon">◇</div><div class="category-info"><h3>{{ categoria.nombre }}</h3><p>{{ categoria.descripcion|default:'Sin descripción'|truncatechars:90 }}</p><div class="category-metrics"><span><b>{{ categoria.total_productos }}</b> productos</span><span><b>{{ categoria.total_stock|default:0 }}</b> unidades</span></div></div><div class="card-actions"><a href="{% url 'categoria_editar' categoria.pk %}">Editar</a><a class="danger-link" href="{% url 'categoria_eliminar' categoria.pk %}">Eliminar</a></div></article>
+  {% empty %}<article class="panel empty-state"><b>No se encontraron categorías</b><span>Crea una para organizar el inventario.</span></article>{% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'inventario/base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block content %}
+<section class="heading"><div><h2>{{ titulo }}</h2><p>Completa los datos solicitados. Los campos marcados son obligatorios.</p></div></section>
+<section class="panel form-panel">
+  <form method="post" novalidate>{% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="form-grid">
+      {% for field in form %}<div class="form-field {% if field.name == 'descripcion' or field.name == 'observacion' or field.name == 'direccion' %}full{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span>*</span>{% endif %}</label>{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<div class="field-error">{{ error }}</div>{% endfor %}</div>{% endfor %}
+    </div>
+    <div class="form-actions"><a class="secondary" href="{% url cancel_url %}">Cancelar</a><button class="primary button-reset" type="submit">Guardar cambios</button></div>
+  </form>
+</section>
+{% endblock %}

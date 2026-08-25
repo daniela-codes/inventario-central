@@ -19,7 +19,10 @@ class ProveedorAdmin(admin.ModelAdmin):
 # Configuración del modelo Producto en el panel de administración.
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre', 'stock', 'precio', 'categoria', 'proveedor')
+    list_display = (
+        'id', 'nombre', 'stock', 'stock_minimo', 'precio', 'categoria',
+        'proveedor',
+    )
     search_fields = ('nombre',)
     list_filter = ('categoria', 'proveedor')
 

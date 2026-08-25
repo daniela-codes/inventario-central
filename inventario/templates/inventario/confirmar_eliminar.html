@@ -1,0 +1,6 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Confirmar eliminación{% endblock %}
+{% block page_title %}Confirmar eliminación{% endblock %}
+{% block content %}
+<section class="panel confirm-card"><div class="confirm-icon">!</div><h2>¿Eliminar {{ tipo }}?</h2><p>Estás a punto de eliminar <b>{{ objeto }}</b>. Esta acción no se puede deshacer.</p><form method="post">{% csrf_token %}<div class="form-actions centered"><a class="secondary" href="{% url cancel_url %}">Cancelar</a><button class="danger-button" type="submit">Sí, eliminar</button></div></form></section>
+{% endblock %}

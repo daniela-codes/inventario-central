@@ -1,0 +1,29 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Productos{% endblock %}
+{% block page_title %}Productos{% endblock %}
+{% block content %}
+<section class="heading">
+  <div><h2>Gestión de productos</h2><p>Consulta el stock, el proveedor y el estado de cada artículo.</p></div>
+  <div class="actions"><a class="primary" href="{% url 'producto_crear' %}">＋ Registrar producto</a></div>
+</section>
+<section class="panel filter-panel">
+  <form method="get" class="filters">
+    <label class="search-field"><span>⌕</span><input type="search" name="q" value="{{ q }}" placeholder="Buscar producto o proveedor..."></label>
+    <select name="categoria"><option value="">Todas las categorías</option>{% for categoria in categorias %}<option value="{{ categoria.pk }}" {% if categoria_seleccionada == categoria.pk|stringformat:'s' %}selected{% endif %}>{{ categoria.nombre }}</option>{% endfor %}</select>
+    <select name="estado"><option value="">Todos los estados</option><option value="disponible" {% if estado == 'disponible' %}selected{% endif %}>Stock disponible</option><option value="bajo" {% if estado == 'bajo' %}selected{% endif %}>Stock bajo</option></select>
+    <button class="filter-button" type="submit">Filtrar</button><a class="clear-filter" href="{% url 'productos' %}">Limpiar</a>
+  </form>
+</section>
+<section class="panel data-panel">
+  <div class="panel-head"><h3>Productos registrados</h3><span class="result-count">{{ total_filtrado }} resultados</span></div>
+  <div class="table-scroll"><table class="data-table"><thead><tr><th>Producto</th><th>Categoría</th><th>Proveedor</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+    {% for producto in pagina %}<tr>
+      <td><div class="entity"><span class="entity-icon">▣</span><div><b>{{ producto.nombre }}</b><small>{{ producto.descripcion|default:'Sin descripción'|truncatechars:55 }}</small></div></div></td>
+      <td><span class="soft-badge">{{ producto.categoria.nombre }}</span></td><td>{{ producto.proveedor.nombre|default:'Sin proveedor' }}</td><td>${{ producto.precio|floatformat:0 }}</td><td><b>{{ producto.stock }}</b> unid.</td>
+      <td>{% if producto.stock <= producto.stock_minimo %}<span class="state low">Stock bajo</span>{% else %}<span class="state ok">Disponible</span>{% endif %}</td>
+      <td><div class="row-actions"><a href="{% url 'producto_editar' producto.pk %}" title="Editar">Editar</a><a class="danger-link" href="{% url 'producto_eliminar' producto.pk %}" title="Eliminar">Eliminar</a></div></td>
+    </tr>{% empty %}<tr><td colspan="7"><div class="empty-state"><b>No se encontraron productos</b><span>Prueba cambiando los filtros o registra uno nuevo.</span></div></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% include 'inventario/paginacion.html' with pagina=pagina %}
+</section>
+{% endblock %}

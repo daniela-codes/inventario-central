@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Inventario Central{% endblock %} · CEIA La Pintana</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <script src="{% static 'main.js' %}" defer></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><a href="{% url 'home' %}" aria-label="Ir al panel"><img src="{% static 'ceia_la_pintana.png' %}" alt="CEIA La Pintana"></a></div>
+    <nav aria-label="Navegación principal">
+      <a class="nav {% if active_nav == 'dashboard' %}active{% endif %}" href="{% url 'home' %}"><span>⌂</span>Panel de control</a>
+      <a class="nav {% if active_nav == 'productos' %}active{% endif %}" href="{% url 'productos' %}"><span>▣</span>Productos</a>
+      <a class="nav {% if active_nav == 'categorias' %}active{% endif %}" href="{% url 'categorias' %}"><span>◇</span>Categorías</a>
+      <a class="nav {% if active_nav == 'proveedores' %}active{% endif %}" href="{% url 'proveedores' %}"><span>♧</span>Proveedores</a>
+      <a class="nav {% if active_nav == 'movimientos' %}active{% endif %}" href="{% url 'movimientos' %}"><span>↕</span>Movimientos</a>
+      <a class="nav {% if active_nav == 'administracion' %}active{% endif %}" href="{% url 'administracion' %}"><span>⚙</span>Administración</a>
+    </nav>
+    <div class="sidebar-user"><span class="user-avatar">{{ request.user.username|first|upper|default:'A' }}</span><div><b>{{ request.user.get_full_name|default:request.user.username }}</b><small>Administrador</small></div><a href="{% url 'logout' %}" title="Cerrar sesión" aria-label="Cerrar sesión">↪</a></div>
+  </aside>
+  <main>
+    <header class="topbar">
+      <div class="top-title"><button class="menu-button" type="button" data-menu-toggle aria-label="Abrir menú">☰</button><h1>{% block page_title %}Panel de inventario{% endblock %}</h1></div>
+      <div class="top-user"><span class="user-avatar">{{ request.user.username|first|upper|default:'A' }}</span><b>Administrador</b></div>
+    </header>
+    <div class="content">
+      {% if messages %}<div class="messages" aria-live="polite">{% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+</body>
+</html>
