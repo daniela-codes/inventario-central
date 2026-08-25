@@ -1,0 +1,39 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Panel de inventario{% endblock %}
+{% block page_title %}Panel de inventario{% endblock %}
+{% block content %}
+  <section class="heading">
+    <div><h2>Resumen general</h2><p>Hola, Administrador. Aquí tienes un resumen del estado actual del inventario.</p></div>
+    <div class="actions"><a class="primary" href="{% url 'producto_crear' %}">＋ Registrar producto</a><a class="secondary" href="{% url 'movimiento_crear' %}">↔ Nuevo movimiento</a></div>
+  </section>
+  <section class="stats">
+    <article class="card"><div class="metric-icon">□</div><div><label>PRODUCTOS</label><strong>{{ total_productos }}</strong><small>Productos registrados</small></div></article>
+    <article class="card"><div class="metric-icon">▱</div><div><label>STOCK TOTAL</label><strong>{{ total_stock }}</strong><small>Unidades en inventario</small></div></article>
+    <article class="card"><div class="metric-icon">↕</div><div><label>MOVIMIENTOS</label><strong>{{ total_movimientos }}</strong><small>Historial registrado</small></div></article>
+    <article class="card warning"><div class="metric-icon orange">△</div><div><label>ALERTAS DE STOCK</label><strong>{{ productos_con_stock }}</strong><small>Productos bajo mínimo</small></div></article>
+  </section>
+  <section class="dashboard-grid">
+    <article class="panel chart-panel">
+      <div class="panel-head"><h3>Stock por categoría</h3><span class="panel-chip">Unidades</span></div>
+      <div class="bar-chart"><div class="bar-y-axis"><span>3.000</span><span>2.500</span><span>2.000</span><span>1.500</span><span>1.000</span><span>500</span><span>0</span></div>
+        <div class="chart-area"><div class="grid-lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="bars">
+          {% for categoria in categorias_stock %}<div class="bar-item"><b>{{ categoria.total_stock|default:0 }}</b><div class="bar" style="height: {{ categoria.altura }}px;"></div><span>{{ categoria.nombre }}</span></div>{% empty %}<p class="chart-empty">No hay categorías con productos.</p>{% endfor %}
+        </div></div>
+      </div>
+    </article>
+    <article class="panel donut-panel">
+      <div class="panel-head"><h3>Entradas y salidas</h3></div>
+      <div class="donut-row"><div class="donut" style="background: conic-gradient(var(--g2) 0 {{ porcentaje_entradas }}%, var(--orange) {{ porcentaje_entradas }}% 100%);"><div><strong>{{ total_movimientos_30_dias }}</strong><small>Total</small></div></div><div class="legend"><p><i class="green-dot"></i>Entradas <b>{{ total_entradas }} ({{ porcentaje_entradas }}%)</b></p><p><i class="orange-dot"></i>Salidas <b>{{ total_salidas }} ({{ porcentaje_salidas }}%)</b></p></div></div>
+    </article>
+    <article class="panel alerts-panel">
+      <div class="panel-head"><h3>Alertas de stock</h3><a href="{% url 'productos' %}?estado=bajo">Ver todos</a></div>
+      <div class="alert-list">{% for producto in productos_alerta %}<div class="alert"><span>△</span><div><b>{{ producto.nombre }}</b><small>{{ producto.categoria.nombre }} · {{ producto.stock }} unid. · Mínimo {{ producto.stock_minimo }}</small></div></div>{% empty %}<div class="empty">No hay productos bajo el stock mínimo.</div>{% endfor %}</div>
+    </article>
+  </section>
+  <section class="panel movements">
+    <div class="panel-head"><h3>Movimientos recientes</h3></div>
+    {% if ultimos_movimientos %}<div class="table-scroll"><table><thead><tr><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Fecha</th><th>Responsable</th><th>Estado</th></tr></thead><tbody>
+      {% for movimiento in ultimos_movimientos %}<tr><td><div class="product"><span class="movement-icon {% if movimiento.tipo == 'ENTRADA' %}in{% else %}out{% endif %}">{% if movimiento.tipo == 'ENTRADA' %}↓{% else %}↑{% endif %}</span>{{ movimiento.producto.nombre }}</div></td><td><span class="type {% if movimiento.tipo == 'ENTRADA' %}entry{% else %}exit{% endif %}">{{ movimiento.get_tipo_display }}</span></td><td><b>{{ movimiento.cantidad }}</b></td><td>{{ movimiento.fecha|date:'d/m/Y H:i' }}</td><td>Administrador</td><td><span class="status">Completado</span></td></tr>{% endfor %}
+    </tbody></table></div><div class="view-all"><a href="{% url 'movimientos' %}">Ver todos los movimientos</a></div>{% else %}<div class="empty">Aún no hay movimientos registrados.</div>{% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Administración{% endblock %}
+{% block page_title %}Administración{% endblock %}
+{% block content %}
+<section class="heading"><div><h2>Herramientas del sistema</h2><p>Accesos técnicos y resumen general para la administración del inventario.</p></div></section>
+<section class="stats admin-stats">
+  <article class="card"><div class="metric-icon">▣</div><div><label>PRODUCTOS</label><strong>{{ total_productos }}</strong><small>Registros activos</small></div></article><article class="card"><div class="metric-icon">◇</div><div><label>CATEGORÍAS</label><strong>{{ total_categorias }}</strong><small>Clasificaciones</small></div></article><article class="card"><div class="metric-icon">♧</div><div><label>PROVEEDORES</label><strong>{{ total_proveedores }}</strong><small>Contactos</small></div></article><article class="card"><div class="metric-icon">↕</div><div><label>MOVIMIENTOS</label><strong>{{ total_movimientos }}</strong><small>Registros históricos</small></div></article>
+</section>
+<section class="admin-grid">
+  <article class="panel admin-option"><div class="admin-option-icon">⚙</div><div><h3>Administración avanzada de Django</h3><p>Gestiona usuarios, permisos y registros directamente desde el panel administrativo.</p><a class="primary inline-button" href="/admin/">Abrir panel de Django →</a></div></article>
+  <article class="panel admin-option"><div class="admin-option-icon api">{ }</div><div><h3>API REST del inventario</h3><p>Consulta los endpoints de productos, categorías, proveedores y movimientos.</p><a class="secondary inline-button" href="/api/">Explorar API REST →</a></div></article>
+  <article class="panel admin-option"><div class="admin-option-icon guide">?</div><div><h3>Acciones rápidas</h3><p>Registra nuevos artículos o actualiza el stock mediante movimientos controlados.</p><div class="quick-links"><a href="{% url 'producto_crear' %}">Registrar producto</a><a href="{% url 'movimiento_crear' %}">Nuevo movimiento</a></div></div></article>
+</section>
+{% endblock %}
