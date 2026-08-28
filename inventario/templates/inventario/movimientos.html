@@ -8,5 +8,5 @@
 <section class="panel data-panel"><div class="panel-head"><h3>Historial de movimientos</h3></div><div class="table-scroll"><table class="data-table"><thead><tr><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Fecha</th><th>Observación</th><th>Estado</th></tr></thead><tbody>
   {% for movimiento in pagina %}<tr><td><div class="entity"><span class="movement-icon {% if movimiento.tipo == 'ENTRADA' %}in{% else %}out{% endif %}">{% if movimiento.tipo == 'ENTRADA' %}↓{% else %}↑{% endif %}</span><div><b>{{ movimiento.producto.nombre }}</b><small>Stock actual: {{ movimiento.producto.stock }}</small></div></div></td><td><span class="type {% if movimiento.tipo == 'ENTRADA' %}entry{% else %}exit{% endif %}">{{ movimiento.get_tipo_display }}</span></td><td><b>{{ movimiento.cantidad }}</b> unid.</td><td>{{ movimiento.fecha|date:'d/m/Y H:i' }}</td><td>{{ movimiento.observacion|default:'Sin observación'|truncatechars:55 }}</td><td><span class="status">Completado</span></td></tr>
   {% empty %}<tr><td colspan="6"><div class="empty-state"><b>No hay movimientos para mostrar</b><span>Registra una entrada o salida de inventario.</span></div></td></tr>{% endfor %}
-</tbody></table></div>{% include 'inventario/paginacion.html' with pagina=pagina %}</section>
+</tbody></table></div>{% include 'inventario/components/_paginacion.html' with pagina=pagina %}</section>
 {% endblock %}

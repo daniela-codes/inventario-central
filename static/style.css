@@ -1217,3 +1217,36 @@ main {
     .category-card .card-actions { grid-column: 2; flex-direction: row; align-items: flex-start; }
     .top-user b { display: none; }
 }
+
+/* Estilos para el Componente Reutilizable de Paginación (Botones Compactos) */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 15px 0;
+  font-family: inherit;
+}
+
+.pag-btn {
+  padding: 4px 8px;              /* Tamaño reducido a la mitad */
+  background-color: #ffffff;      /* Fondo blanco */
+  color: #2e7d32;                 /* Texto verde */
+  border: 1.5px solid #2e7d32;    /* Borde verde del mismo tono */
+  border-radius: 4px;
+  font-size: 0.75rem;             /* Fuente más pequeña */
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.pag-btn:hover {
+  background-color: #2e7d32;      /* Efecto hover: se rellena de verde */
+  color: #ffffff;                 /* Texto cambia a blanco al pasar el mouse */
+}
+
+.pag-info {
+  font-size: 0.8rem;
+  color: #4a5568;
+  font-weight: 500;
+}

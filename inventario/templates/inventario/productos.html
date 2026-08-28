@@ -24,6 +24,9 @@
       <td><div class="row-actions"><a href="{% url 'producto_editar' producto.pk %}" title="Editar">Editar</a><a class="danger-link" href="{% url 'producto_eliminar' producto.pk %}" title="Eliminar">Eliminar</a></div></td>
     </tr>{% empty %}<tr><td colspan="7"><div class="empty-state"><b>No se encontraron productos</b><span>Prueba cambiando los filtros o registra uno nuevo.</span></div></td></tr>{% endfor %}
   </tbody></table></div>
-  {% include 'inventario/paginacion.html' with pagina=pagina %}
+
+  <!-- Componente reutilizable de paginación -->
+   
+  {% include 'inventario/components/_paginacion.html' with pagina=pagina %}
 </section>
 {% endblock %}
