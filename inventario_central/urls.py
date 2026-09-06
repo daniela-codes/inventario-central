@@ -25,6 +25,7 @@ urlpatterns = [
     path('proveedores/<int:pk>/eliminar/', views.proveedor_eliminar, name='proveedor_eliminar'),
     path('movimientos/', views.movimientos, name='movimientos'),
     path('movimientos/nuevo/', views.movimiento_crear, name='movimiento_crear'),
+    path('movimientos/<int:pk>/eliminar/', views.movimiento_eliminar, name='movimiento_eliminar'),
     path('administracion/', views.administracion, name='administracion'),
     path('admin/', admin.site.urls),
     path('api/', include('inventario.urls')),

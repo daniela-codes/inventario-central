@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Count, F, Q, Sum
 from django.utils import timezone
+from django.utils.dateparse import parse_date
+from django.core.exceptions import ValidationError
 from datetime import timedelta
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -349,11 +351,36 @@ def proveedor_eliminar(request, pk):
 def movimientos(request):
     consulta = request.GET.get('q', '').strip()
     tipo = request.GET.get('tipo', '').strip()
+    fecha_desde_texto = request.GET.get('fecha_desde', '').strip()
+    fecha_hasta_texto = request.GET.get('fecha_hasta', '').strip()
+    fecha_desde = parse_date(fecha_desde_texto) if fecha_desde_texto else None
+    fecha_hasta = parse_date(fecha_hasta_texto) if fecha_hasta_texto else None
     registros = MovimientoInventario.objects.select_related('producto')
+
+    # Aunque los campos de fecha del formulario validan en el navegador,
+    # también se comprueban aquí para proteger las consultas manuales por URL.
+    fechas_validas = True
+    if fecha_desde_texto and fecha_desde is None:
+        messages.error(request, 'La fecha inicial no es válida.')
+        fechas_validas = False
+    if fecha_hasta_texto and fecha_hasta is None:
+        messages.error(request, 'La fecha final no es válida.')
+        fechas_validas = False
+    if fecha_desde and fecha_hasta and fecha_desde > fecha_hasta:
+        messages.error(
+            request,
+            'La fecha inicial no puede ser posterior a la fecha final.'
+        )
+        fechas_validas = False
+
     if consulta:
         registros = registros.filter(producto__nombre__icontains=consulta)
     if tipo in {'ENTRADA', 'SALIDA'}:
         registros = registros.filter(tipo=tipo)
+    if fechas_validas and fecha_desde:
+        registros = registros.filter(fecha__date__gte=fecha_desde)
+    if fechas_validas and fecha_hasta:
+        registros = registros.filter(fecha__date__lte=fecha_hasta)
     pagina = Paginator(registros.order_by('-fecha'), 15).get_page(
         request.GET.get('page')
     )
@@ -362,6 +389,8 @@ def movimientos(request):
         'pagina': pagina,
         'q': consulta,
         'tipo': tipo,
+        'fecha_desde': fecha_desde_texto,
+        'fecha_hasta': fecha_hasta_texto,
         'entradas': registros.filter(tipo='ENTRADA').aggregate(total=Sum('cantidad'))['total'] or 0,
         'salidas': registros.filter(tipo='SALIDA').aggregate(total=Sum('cantidad'))['total'] or 0,
     })
@@ -398,6 +427,60 @@ def movimiento_crear(request):
                 )
                 return redirect('movimientos')
     return _render_form(request, form, 'Nuevo movimiento', 'movimientos', 'movimientos')
+
+
+def _eliminar_movimiento_y_revertir_stock(pk):
+    """Elimina un movimiento y devuelve el stock a su estado anterior."""
+    with transaction.atomic():
+        movimiento = get_object_or_404(
+            MovimientoInventario.objects.select_for_update().select_related('producto'),
+            pk=pk,
+        )
+        producto = Producto.objects.select_for_update().get(
+            pk=movimiento.producto_id
+        )
+
+        # Revertir una entrada significa descontar sus unidades. Si esas
+        # unidades ya fueron usadas, impedir la eliminación evita stock negativo.
+        if movimiento.tipo == 'ENTRADA':
+            if producto.stock < movimiento.cantidad:
+                raise ValidationError(
+                    'No se puede eliminar esta entrada porque el stock actual '
+                    'no permite revertirla.'
+                )
+            producto.stock -= movimiento.cantidad
+        else:
+            # Revertir una salida devuelve las unidades al inventario.
+            producto.stock += movimiento.cantidad
+
+        producto.save(update_fields=['stock'])
+        movimiento.delete()
+        return producto, movimiento.tipo, movimiento.cantidad
+
+
+@login_required(login_url='login')
+def movimiento_eliminar(request, pk):
+    movimiento = get_object_or_404(MovimientoInventario, pk=pk)
+    if request.method == 'POST':
+        try:
+            producto, tipo, cantidad = _eliminar_movimiento_y_revertir_stock(pk)
+        except ValidationError as error:
+            messages.error(request, error.messages[0])
+        else:
+            messages.success(
+                request,
+                f'{tipo.title()} eliminada. Stock de {producto.nombre} '
+                f'revertido en {cantidad} unidades.',
+            )
+        return redirect('movimientos')
+
+    return _render_confirm(
+        request,
+        movimiento,
+        'movimiento',
+        'movimientos',
+        'movimientos',
+    )
 
 
 @login_required(login_url='login')
@@ -516,6 +599,16 @@ class MovimientoInventarioViewSet(viewsets.ModelViewSet):
             self.get_serializer(movimiento).data,
             status=status.HTTP_201_CREATED
         )
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            _eliminar_movimiento_y_revertir_stock(kwargs['pk'])
+        except ValidationError as error:
+            return Response(
+                {'error': error.messages[0]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_view_name(self):
         return 'Movimientos de inventario'
