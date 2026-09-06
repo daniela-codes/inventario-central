@@ -1,0 +1,41 @@
+<div class="table-scroll">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Proveedor</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in pagina %}<tr>
+                <td>
+                    <div class="entity"><span class="entity-icon">▣</span>
+                        <div><b>{{ producto.nombre }}</b><small>{{ producto.descripcion|default:'Sin
+                                descripción'|truncatechars:55 }}</small></div>
+                    </div>
+                </td>
+                <td><span class="soft-badge">{{ producto.categoria.nombre }}</span></td>
+                <td>{{ producto.proveedor.nombre|default:'Sin proveedor' }}</td>
+                <td>${{ producto.precio|floatformat:0 }}</td>
+                <td><b>{{ producto.stock }}</b> unid.</td>
+                <td>{% if producto.stock <= producto.stock_minimo %}<span class="state low">Stock bajo</span>{% else
+                        %}<span class="state ok">Disponible</span>{% endif %}</td>
+                <td>
+                    <div class="row-actions"><a href="{% url 'producto_editar' producto.pk %}"
+                            title="Editar">Editar</a><a class="danger-link"
+                            href="{% url 'producto_eliminar' producto.pk %}" title="Eliminar">Eliminar</a></div>
+                </td>
+            </tr>{% empty %}<tr>
+                <td colspan="7">
+                    <div class="empty-state"><b>No se encontraron productos</b><span>Prueba cambiando los filtros o
+                            registra uno nuevo.</span></div>
+                </td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>

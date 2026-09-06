@@ -7,10 +7,13 @@
     <div class="actions"><a class="primary" href="{% url 'producto_crear' %}">＋ Registrar producto</a><a class="secondary" href="{% url 'movimiento_crear' %}">↔ Nuevo movimiento</a></div>
   </section>
   <section class="stats">
-    <article class="card"><div class="metric-icon">□</div><div><label>PRODUCTOS</label><strong>{{ total_productos }}</strong><small>Productos registrados</small></div></article>
-    <article class="card"><div class="metric-icon">▱</div><div><label>STOCK TOTAL</label><strong>{{ total_stock }}</strong><small>Unidades en inventario</small></div></article>
-    <article class="card"><div class="metric-icon">↕</div><div><label>MOVIMIENTOS</label><strong>{{ total_movimientos }}</strong><small>Historial registrado</small></div></article>
-    <article class="card warning"><div class="metric-icon orange">△</div><div><label>ALERTAS DE STOCK</label><strong>{{ productos_con_stock }}</strong><small>Productos bajo mínimo</small></div></article>
+    {% include 'inventario/components/_tarjeta_resumen.html' with titulo="PRODUCTOS" valor=total_productos descripcion="Productos registrados" icono="□" %}
+    
+    {% include 'inventario/components/_tarjeta_resumen.html' with titulo="STOCK TOTAL" valor=total_stock descripcion="Unidades en inventario" icono="▱" %}
+    
+    {% include 'inventario/components/_tarjeta_resumen.html' with titulo="MOVIMIENTOS" valor=total_movimientos descripcion="Historial registrado" icono="↕" %}
+    
+    {% include 'inventario/components/_tarjeta_resumen.html' with titulo="ALERTAS DE STOCK" valor=productos_con_stock descripcion="Productos bajo mínimo" icono="△" clase_card="warning" clase_icono="orange" %}
   </section>
   <section class="dashboard-grid">
     <article class="panel chart-panel">
