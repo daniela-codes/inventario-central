@@ -1,7 +1,7 @@
 {% if pagina.paginator.num_pages > 1 %}
 <nav class="pagination" aria-label="Paginación">
   {% if pagina.has_previous %}
-    <a href="?page={{ pagina.previous_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}" class="pag-btn">
+    <a href="?page={{ pagina.previous_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if tipo %}&tipo={{ tipo|urlencode }}{% endif %}{% if fecha_desde %}&fecha_desde={{ fecha_desde|urlencode }}{% endif %}{% if fecha_hasta %}&fecha_hasta={{ fecha_hasta|urlencode }}{% endif %}" class="pag-btn">
       ‹ Anterior
     </a>
   {% endif %}
@@ -11,7 +11,7 @@
   </span>
 
   {% if pagina.has_next %}
-    <a href="?page={{ pagina.next_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}" class="pag-btn">
+    <a href="?page={{ pagina.next_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if tipo %}&tipo={{ tipo|urlencode }}{% endif %}{% if fecha_desde %}&fecha_desde={{ fecha_desde|urlencode }}{% endif %}{% if fecha_hasta %}&fecha_hasta={{ fecha_hasta|urlencode }}{% endif %}" class="pag-btn">
       Siguiente ›
     </a>
   {% endif %}

@@ -688,7 +688,7 @@ main {
 
 .filters {
     display: grid;
-    grid-template-columns: minmax(220px, 1fr) 180px 170px auto auto;
+    grid-template-columns: minmax(220px, 1fr) 150px 165px 165px auto auto;
     gap: 9px;
     align-items: center;
 }
@@ -730,6 +730,27 @@ main {
 .filters select,
 .form-control {
     padding: 0 11px;
+}
+
+.filters > label:not(.search-field) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.filters input[type="date"] {
+    width: 100%;
+    height: 36px;
+    padding: 0 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
 }
 
 .search-field input:focus,
@@ -1186,7 +1207,7 @@ main {
     .stats { grid-template-columns: repeat(2, 1fr); }
     .dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-template-rows: auto; }
     .alerts-panel { grid-column: 1 / -1; }
-    .filters { grid-template-columns: minmax(200px, 1fr) 150px 150px auto auto; }
+    .filters { grid-template-columns: minmax(200px, 1fr) 130px 145px 145px auto auto; }
     .admin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
