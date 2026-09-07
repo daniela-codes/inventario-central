@@ -1,0 +1,14 @@
+{% load static %}
+
+<aside class="sidebar" id="sidebar">
+    <div class="brand"><a href="{% url 'home' %}" aria-label="Ir al panel"><img src="{% static 'ceia_la_pintana.png' %}" alt="CEIA La Pintana"></a></div>
+    <nav aria-label="Navegación principal">
+      <a class="nav {% if active_nav == 'dashboard' %}active{% endif %}" href="{% url 'home' %}"><span>⌂</span>Panel de control</a>
+      <a class="nav {% if active_nav == 'productos' %}active{% endif %}" href="{% url 'productos' %}"><span>▣</span>Productos</a>
+      <a class="nav {% if active_nav == 'categorias' %}active{% endif %}" href="{% url 'categorias' %}"><span>◇</span>Categorías</a>
+      <a class="nav {% if active_nav == 'proveedores' %}active{% endif %}" href="{% url 'proveedores' %}"><span>♧</span>Proveedores</a>
+      <a class="nav {% if active_nav == 'movimientos' %}active{% endif %}" href="{% url 'movimientos' %}"><span>↕</span>Movimientos</a>
+      <a class="nav {% if active_nav == 'administracion' %}active{% endif %}" href="{% url 'administracion' %}"><span>⚙</span>Administración</a>
+    </nav>
+    <div class="sidebar-user"><span class="user-avatar">{{ request.user.username|first|upper|default:'A' }}</span><div><b>{{ request.user.get_full_name|default:request.user.username }}</b><small>Administrador</small></div><a href="{% url 'logout' %}" title="Cerrar sesión" aria-label="Cerrar sesión">↪</a></div>
+  </aside>
