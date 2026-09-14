@@ -519,6 +519,22 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
 
+    def destroy(self, request, *args, **kwargs):
+        categoria = self.get_object()
+
+        if categoria.productos.exists():
+            return Response(
+                {
+                    'error': (
+                        'No se puede eliminar una categoría '
+                        'que tiene productos asociados.'
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return super().destroy(request, *args, **kwargs)
+
     def get_view_name(self):
         return 'Categorías del inventario'
 

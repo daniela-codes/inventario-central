@@ -75,6 +75,152 @@ class InventarioAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_no_permitir_eliminar_categoria_con_productos_asociados(self):
+        url = reverse('categoria-detail', args=[self.categoria.pk])
+
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(
+            Categoria.objects.filter(pk=self.categoria.pk).exists()
+        )
+        self.assertTrue(
+            Producto.objects.filter(pk=self.producto.pk).exists()
+        )
+
+    def test_permitir_eliminar_categoria_sin_productos(self):
+        categoria = Categoria.objects.create(
+            nombre='Categoria temporal',
+            descripcion='Categoria sin productos asociados.'
+        )
+        url = reverse('categoria-detail', args=[categoria.pk])
+
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            Categoria.objects.filter(pk=categoria.pk).exists()
+        )
+
+    def test_eliminar_proveedor_mantiene_producto_sin_proveedor(self):
+        url = reverse('proveedor-detail', args=[self.proveedor.pk])
+
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            Proveedor.objects.filter(pk=self.proveedor.pk).exists()
+        )
+
+        self.producto.refresh_from_db()
+        self.assertTrue(
+            Producto.objects.filter(pk=self.producto.pk).exists()
+        )
+        self.assertIsNone(self.producto.proveedor)
+
+    def test_no_permitir_categoria_duplicada(self):
+        url = reverse('categoria-list')
+
+        data = {
+            'nombre': self.categoria.nombre,
+            'descripcion': 'Intento de categoria duplicada.'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            Categoria.objects.filter(nombre=self.categoria.nombre).count(),
+            1
+        )
+
+    def test_no_permitir_proveedor_con_correo_invalido(self):
+        url = reverse('proveedor-list')
+
+        data = {
+            'nombre': 'Proveedor correo invalido',
+            'telefono': '+56922222222',
+            'correo': 'correo-no-valido',
+            'direccion': 'La Serena'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(
+            Proveedor.objects.filter(nombre='Proveedor correo invalido').exists()
+        )
+
+    def test_crear_categoria_por_api(self):
+        url = reverse('categoria-list')
+
+        data = {
+            'nombre': 'Herramientas',
+            'descripcion': 'Herramientas y accesorios.'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(
+            Categoria.objects.filter(nombre='Herramientas').exists()
+        )
+
+    def test_editar_categoria_por_api(self):
+        url = reverse('categoria-detail', args=[self.categoria.pk])
+
+        data = {
+            'nombre': 'Materiales administrativos',
+            'descripcion': 'Categoria actualizada.'
+        }
+
+        response = self.client.patch(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.categoria.refresh_from_db()
+        self.assertEqual(
+            self.categoria.nombre,
+            'Materiales administrativos'
+        )
+
+    def test_crear_proveedor_por_api(self):
+        url = reverse('proveedor-list')
+
+        data = {
+            'nombre': 'Proveedor Norte',
+            'telefono': '+56933333333',
+            'correo': 'contacto@proveedornorte.cl',
+            'direccion': 'Coquimbo'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(
+            Proveedor.objects.filter(nombre='Proveedor Norte').exists()
+        )
+
+    def test_editar_proveedor_por_api(self):
+        url = reverse('proveedor-detail', args=[self.proveedor.pk])
+
+        data = {
+            'nombre': 'Distribuidora Central Actualizada',
+            'telefono': '+56944444444'
+        }
+
+        response = self.client.patch(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.proveedor.refresh_from_db()
+        self.assertEqual(
+            self.proveedor.nombre,
+            'Distribuidora Central Actualizada'
+        )
+        self.assertEqual(
+            self.proveedor.telefono,
+            '+56944444444'
+        )
+
     def test_crear_movimiento_inventario(self):
         # Verifica que se pueda registrar un movimiento de inventario.
         url = reverse('movimientoinventario-list')
