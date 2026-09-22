@@ -556,7 +556,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
     """
     Permite gestionar los productos disponibles en el inventario.
     """
-    queryset = Producto.objects.all()
+    queryset = Producto.objects.select_related('categoria', 'proveedor').all()
     serializer_class = ProductoSerializer
 
     def get_view_name(self):
@@ -570,7 +570,7 @@ class MovimientoInventarioViewSet(viewsets.ModelViewSet):
     el stock del producto.
     """
 
-    queryset = MovimientoInventario.objects.all()
+    queryset = MovimientoInventario.objects.select_related('producto').all()
     serializer_class = MovimientoInventarioSerializer
 
     @transaction.atomic
